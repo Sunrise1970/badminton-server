@@ -1,0 +1,337 @@
+var models              = require('../models');
+var mongoose            = require('mongoose');
+var eventproxy          = require('eventproxy');
+var competiton          = models.competiton;
+var competitonUser      = models.competitonUser;
+var competitonAgainst   = models.competitonAgainst;
+
+
+/**
+ * 添加比赛
+ * Callback:
+ * - err                                        数据库异常
+ * - newAndSaveCompetiton                       比赛列表信息
+ * @param {Number} competiton_type              比赛类型 default:1（1：大型赛； 2：个人赛；3：8人转）
+ * @param {Number} hall_name                    羽毛球馆名称
+ * @param {Number} competiton_name              比赛名称
+ * @param {String} competiton_date              比赛时间
+ * @param {Number} competiton_img               宣传图片
+ * @param {String} company                      举办公司
+ * @param {String} company_logo                 公司logo
+ * @param {Object} attend_num                   已报名人数（0：无限制）
+ * @param {Object} allow_attend_num             允许报名人数
+ * @param {Number} state                        比赛状态（1：未开始；2：进行中 3：已结束）
+ * @param {Function} callback                   回调函数
+ */
+exports.newAndSaveCompetiton = function(competiton_type, hall_name, competiton_name, competiton_date, competiton_img, company, company_logo, attend_num, allow_attend_num, state, callback) {
+  var competitons = new competiton();
+  competitons.competiton_type = competiton_type;
+  competitons.hall_name = hall_name;
+  competitons.competiton_name = competiton_name;
+  competitons.competiton_date = competiton_date;
+  competitons.competiton_img = competiton_img;
+  competitons.attend_num = attend_num;
+  competitons.company_logo = company_logo;
+  competitons.company = company;
+  competitons.allow_attend_num = allow_attend_num;
+  competitons.state = state;
+
+  competitons.save(callback);
+}
+
+/**
+ * 比赛列表
+ * Callback:
+ * - err                                       数据库异常
+ * - list                                      比赛列表信息
+ * @param {Function} callback                  回调函数
+ */
+exports.list = function(callback){
+  competiton.find(function(err, list) {
+    if (err) {
+      return callback(err);
+    } else {
+      return callback(null, list);
+    }
+  })
+}
+
+/**
+ * 比赛详情
+ * - getCompetitonInfoById                     用户信息
+ * - err                                       数据库异常
+ * @param {Number} competitonId                比赛id
+ * @param {Function} callback                  回调函数
+ */
+exports.getCompetitonInfoById = function(competitonId, callback) {
+  competiton.findOne({ _id: competitonId }, function(err, info){
+    if (err) {
+      return callback(err);
+    } else if(info === null) {
+      return callback(null, []);
+    } else {
+      return callback(null, info);
+    }
+  });
+}
+
+/**
+ * 用户报名
+ * Callback:
+ * - err                                       数据库异常
+ * - competitonUser                            用户报名信息
+ * @param {String} name                        用户名
+ * @param {String} card                        身份证
+ * @param {String} tel                         手机号码
+ * @param {String} sex                         性别
+ * @param {Number} competiton_type             参赛类型
+ * @param {Function} callback                  回调函数
+ */
+exports.newAndSaveUser = function(name, card, tel, sex, competiton_type, competiton_id, callback) {
+  var user = new competitonUser();
+  user.name = name;
+  user.card = card;
+  user.tel = tel;
+  user.sex = sex;
+  user.competiton_id = competiton_id;
+  user.competiton_type = competiton_type;
+
+  user.save(callback);
+}
+
+/**
+ * 比赛用户列表
+ * - memberList                                用户报名信息
+ * - err                                       数据库异常
+ * @param {Number} competiton_type             参赛类型
+ * @param {Function} callback                  回调函数
+ */
+exports.memberList = function(id, competiton_type, callback) {
+  competitonUser.find({ competiton_type: competiton_type, competiton_id: id  }, function(err, competitonMembers){
+    if (err) {
+      return callback(err);
+    } else if(competitonMembers.length === 0) {
+      return callback(null, []);
+    } else {
+      return callback(null, competitonMembers);
+    }
+  });
+}
+
+/**
+ * 根据用户id获取用户信息
+ * - getUserByUserId                           用户信息
+ * - err                                       数据库异常
+ * @param {Number} userId                      参赛类型
+ * @param {Function} callback                  回调函数
+ */
+exports.getUserByUserId = function(userId, callback) {
+  competitonUser.findOne({ _id: userId }, function(err, user){
+    if (err) {
+      return callback(err);
+    } else if(user === null) {
+      return callback(null, []);
+    } else {
+      return callback(null, user);
+    }
+  });
+}
+
+/**
+ * 比赛用户列表 -- 统计
+ * - memberNumBySex                            根据性别查找人数
+ * - err                                       数据库异常
+ * @param {Number} competitonMemberMan         男（1）
+ * @param {Number} competitonMemberWomen       女（2）
+ * @param {Function} callback                  回调函数
+ */
+exports.memberNumBySex = function(id, sex, callback) {
+  competitonUser.find({ sex: sex, competiton_id: id }, function(err, competitonMembers){
+    if (err) {
+      return callback(err);
+    } else if(competitonMembers.length === 0) {
+      return callback(null, 0);
+    } else {
+      return callback(null, competitonMembers.length);
+    }
+  });
+}
+
+/**
+ * 比赛用户列表 -- 统计
+ * - memberStatistics                          总参赛人数
+ * - err                                       数据库异常
+ * @param {Number} competitonMembersAll        参赛总人数
+ * @param {Function} callback                  回调函数
+ */
+exports.memberNumAll = function(id, callback) {
+  competitonUser.find({ competiton_id: id }, function(err, competitonMembers){
+    if (err) {
+      return callback(err);
+    } else if(competitonMembers.length === 0) {
+      return callback(null, 0);
+    } else {
+      return callback(null, competitonMembers.length);
+    }
+  });
+}
+
+/**
+ * 添加对阵
+ * Callback:
+ * - err                                       数据库异常
+ * - newAndSaveAgainst                         添加对阵信息
+ * @param {Number} competiton_type             参赛类型(default: 1)
+ * @param {Number} competiton_process_type     进程类型(default: 1)
+ * @param {Number} competiton_area             比赛场地(default: 1)
+ * @param {Number} competiton_order            场次(default: 1)
+ * @param {String} judgment                    裁判
+ * @param {Object} part_a                      a用户id组
+ * @param {Object} part_b                      b用户id组
+ * @param {Number} part_a_score                a用户得分(default: 0)
+ * @param {Number} part_b_score                b用户得分(default: 0)
+ * @param {Object} score_detail                单局分数
+ * @param {Number} state                       比赛状态（1：未开始；2：进行中 3：已结束）
+ * @param {Function} callback 回调函数
+ */
+exports.newAndSaveAgainst = function(competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, callback) {
+  var against = new competitonAgainst();
+  against.competiton_type = competiton_type;
+  against.competiton_process_type = competiton_process_type;
+  against.competiton_area = competiton_area;
+  against.competiton_order = competiton_order;
+  against.judgment = judgment;
+  against.part_a = part_a;
+  against.part_b = part_b;
+  against.part_a_score = part_a_score;
+  against.part_b_score = part_b_score;
+  against.score_detail = score_detail;
+  against.state = state;
+
+  against.save(callback);
+}
+
+/**
+ * 对阵列表
+ * - againstList                               对阵列表信息
+ * - err                                       数据库异常
+ * @param {Number} competiton_type             参赛类型
+ * @param {Number} competiton_process_type     进程类型
+ * @param {Function} callback                  回调函数
+ */
+exports.againstList = function(competiton_type, competiton_process_type, callback) {
+  var that = this;
+  competitonAgainst.find({ competiton_type: competiton_type, competiton_process_type: competiton_process_type }).lean().exec(function(err, againstList){
+    if (err) {
+      return callback(err);
+    }
+    if(againstList.length === 0) {
+      return callback(null, []);
+    }
+    var proxy = new eventproxy();
+    proxy.after('user_find', againstList.length, function () {
+      callback(null, againstList);
+    });
+    for (var j = 0; j < againstList.length; j++) {
+      (function(i) {
+        var part_a_arr = againstList[i].part_a.split("_"),
+            part_b_arr = againstList[i].part_b.split("_"),
+            part_a_obj = {},
+            part_b_obj = {};
+        // 队员a信息
+        that.getUserByUserIdArr(part_a_arr, function(err, user) {
+          if (err) {
+            return callback(err);
+          }
+          againstList[i].part_a_user = user;
+        });
+        // 队员b信息
+        that.getUserByUserIdArr(part_b_arr, function(err, user) {
+          if (err) {
+            return callback(err);
+          }
+          againstList[i].part_b_user = user;
+          proxy.emit('user_find');
+        });
+      })(j);
+    }
+  });
+}
+
+/**
+ * 我的比赛
+ * - getAgainstInfoByUserID,                   对阵列表信息
+ * - err                                       数据库异常
+ * @param {String} userId                      用户id
+ * @param {Function} callback                  回调函数
+ */
+exports.getAgainstInfoByUserID = function(userId, callback) {
+  var that = this;
+  var re =new RegExp(userId, "gim");
+  competitonAgainst
+  .find()
+  .or([{ 'part_a': re }, { 'part_b': re }])
+  .lean()
+  .exec(function(err, againstList){
+    if (err) {
+      return callback(err);
+    }
+    if(againstList.length === 0) {
+      return callback(null, []);
+    }
+    var proxy = new eventproxy();
+    proxy.after('user_find', againstList.length, function () {
+      callback(null, againstList);
+    });
+    for (var j = 0; j < againstList.length; j++) {
+      (function(i) {
+        var part_a_arr = againstList[i].part_a.split("_"),
+            part_b_arr = againstList[i].part_b.split("_"),
+            part_a_obj = {},
+            part_b_obj = {};
+        // 队员a信息
+        that.getUserByUserIdArr(part_a_arr, function(err, user) {
+          if (err) {
+            return callback(err);
+          }
+          againstList[i].part_a_user = user;
+        });
+        // 队员b信息
+        that.getUserByUserIdArr(part_b_arr, function(err, user) {
+          if (err) {
+            return callback(err);
+          }
+          againstList[i].part_b_user = user;
+          proxy.emit('user_find');
+        });
+      })(j);
+    }
+  });
+}
+
+/**
+ * 通过用户id获取用户信息
+ * - getUserByUserId                           对阵列表信息
+ * - err                                       数据库异常
+ * @param {String} userId                      用户id
+ * @param {Function} callback                  回调函数
+ */
+exports.getUserByUserIdArr = function(userArr, callback) {
+  // competitonUser.find({ "_id": { "$in": userArr } }, { 'name':1, 'tel':1 } , function(err, user){
+  //   if (err) {
+  //     return callback(err);
+  //   } else {
+  //     return callback(null, user);
+  //   }
+  // });
+  competitonUser
+  .find('', { 'name':1, 'tel':1 })
+  .where('_id').in(userArr)
+  .exec(function(err, user){
+    if (err) {
+      return callback(err);
+    } else {
+      return callback(null, user);
+    }
+  });
+}
