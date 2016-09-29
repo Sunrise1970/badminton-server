@@ -12,4 +12,4 @@ npm install
 
 # serve with hot reload at localhost:3000
 
-DEBUG=badminton:* npm start
+DEBUG=badminton-server:* npm start
