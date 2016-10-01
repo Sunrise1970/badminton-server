@@ -236,7 +236,7 @@ exports.userAgainstList = function(req, res, next) {
 }
 /* 比赛详情 */
 exports.competitonInfo = function(req, res, next) {
-  var id = req.body.competitonId;
+  var id = req.query.competitonId;
   Competiton.getCompetitonInfoById(id, function(err, info) {
     if (err) {
       result = tools.returnMeg(0, err);

@@ -23,7 +23,7 @@ router.post('/competitonAdd', competiton.competitonAdd);
 router.get('/competitonList', competiton.competitonList);
 
 /* 比赛详情 */
-router.post('/competitonInfo', competiton.competitonInfo);
+router.get('/competitonInfo', competiton.competitonInfo);
 
 /* 用户报名 */
 router.post('/attend', competiton.attend);
