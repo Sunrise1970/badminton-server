@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 
 });
 /* 添加比赛 */
-router.post('/competitonAdd', competiton.competitonAdd);
+router.get('/competitonAdd', competiton.competitonAdd);
 
 /* 比赛列表 */
 router.get('/competitonList', competiton.competitonList);
@@ -26,10 +26,10 @@ router.get('/competitonList', competiton.competitonList);
 router.get('/competitonInfo', competiton.competitonInfo);
 
 /* 用户报名 */
-router.post('/attend', competiton.attend);
+router.get('/attend', competiton.attend);
 
 /* 比赛人员列表 */
-router.post('/memberList', competiton.memberList);
+router.get('/memberList', competiton.memberList);
 
 /* 添加对阵 */
 router.post('/againstAdd', competiton.against);

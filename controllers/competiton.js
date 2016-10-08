@@ -58,20 +58,20 @@ exports.competitonList = function(req, res, next) {
 
 /* 比赛报名 */
 exports.attend = function(req, res, next) {
-  var name = req.body.name,
-      card = req.body.card,
-      tel = req.body.tel,
-      competiton_id = req.body.competiton_id,
-      sex = req.body.sex,
-      competiton_type = req.body.competiton_type;
+  var name = req.query.name,
+      card = req.query.card,
+      tel = req.query.tel,
+      competiton_id = req.query.competitonId,
+      sex = req.query.sex,
+      competiton_type = req.query.competitonType;
   if ([name, card, tel].some(function(item) { return item === ''; })) {
     result = tools.returnMeg(0, '请输入完整的信息');
     return res.send(result);
   }
-  if (!validator.isMobilePhone(tel, 'zh-CN')) {
-    result = tools.returnMeg(0, '手机号码有误');
-    return res.send(result);
-  }
+  // if (!validator.isMobilePhone(tel, 'zh-CN')) {
+  //   result = tools.returnMeg(0, '手机号码有误');
+  //   return res.send(result);
+  // }
   Competiton.newAndSaveUser(name, card, tel, sex, competiton_type, competiton_id, function(err) {
     if (err) {
       result = tools.returnMeg(0, err);
