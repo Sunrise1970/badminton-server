@@ -58,13 +58,10 @@ exports.competitonList = function(req, res, next) {
 
 /* 比赛报名 */
 exports.attend = function(req, res, next) {
-  var name = req.query.name,
-      card = req.query.card,
-      tel = req.query.tel,
+  var user = req.query.user,
       competiton_id = req.query.competitonId,
-      sex = req.query.sex,
       competiton_type = req.query.competitonType;
-  if ([name, card, tel].some(function(item) { return item === ''; })) {
+  if ([user].some(function(item) { return item === ''; })) {
     result = tools.returnMeg(0, '请输入完整的信息');
     return res.send(result);
   }
@@ -72,16 +69,13 @@ exports.attend = function(req, res, next) {
   //   result = tools.returnMeg(0, '手机号码有误');
   //   return res.send(result);
   // }
-  Competiton.newAndSaveUser(name, card, tel, sex, competiton_type, competiton_id, function(err) {
+  Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
     if (err) {
       result = tools.returnMeg(0, err);
       return next(err);
     } else {
       let data = {
-        name: name,
-        card: card,
-        tel: tel,
-        sex: sex,
+        user: user,
         competiton_id: competiton_id,
         competiton_type: competiton_type
       }
@@ -94,8 +88,8 @@ exports.attend = function(req, res, next) {
 /* 参加人员列表 */
 exports.memberList = function(req, res, next) {
   var ep = new eventProxy();
-  var competiton_type = req.body.competiton_type || 1,
-      id = req.body.competiton_id,
+  var competiton_type = req.query.competiton_type || 1,
+      id = req.query.competiton_id,
       data = {};
 
   ep.all('list', 'all', 'man', 'women', function (list, all, man, women) {
@@ -115,7 +109,7 @@ exports.memberList = function(req, res, next) {
     }
   });
   // 参赛总人数
-  Competiton.memberNumAll(id, function(err, all) {
+  Competiton.memberStatistics(id, 0, function(err, all) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -123,7 +117,7 @@ exports.memberList = function(req, res, next) {
     }
   });
   // 参赛男数
-  Competiton.memberNumBySex(id, 1, function(err, man) {
+  Competiton.memberStatistics(id, 1, function(err, man) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -131,7 +125,7 @@ exports.memberList = function(req, res, next) {
     }
   });
   // 参赛女数
-  Competiton.memberNumBySex(id, 2, function(err, women) {
+  Competiton.memberStatistics(id, 2, function(err, women) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -142,7 +136,8 @@ exports.memberList = function(req, res, next) {
 
 /* 添加对阵 */
 exports.against = function(req, res, next) {
-  var competiton_type = req.body.competiton_type,
+  var id = req.body.competiton_id,
+      competiton_type = req.body.competiton_type,
       competiton_process_type = req.body.competiton_process_type,
       competiton_area = req.body.competiton_area,
       competiton_order = req.body.competiton_order,
@@ -154,12 +149,13 @@ exports.against = function(req, res, next) {
       score_detail = req.body.score_detail,
       state = req.body.state,
       result;
-  Competiton.newAndSaveAgainst(competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, function(err) {
+  Competiton.newAndSaveAgainst(id, competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, function(err) {
     if (err) {
       result = tools.returnMeg(0, err);
       return next(err);
     } else {
       let data = {}
+      data.id = id;
       data.competiton_type = competiton_type;
       data.competiton_process_type = competiton_process_type;
       data.competiton_area = competiton_area;
@@ -180,8 +176,9 @@ exports.against = function(req, res, next) {
 /* 对阵列表 */
 exports.againstList = function(req, res, next) {
   var ep = new eventProxy();
-  var competiton_type = req.body.competiton_type || 1,
-      competiton_process_type = req.body.competiton_process_type || 1,
+  var competiton_type = req.query.competiton_type,
+      competiton_process_type = req.query.competiton_process_type,
+      id = req.query.competiton_id,
       data = {};
 
   ep.all('list', function (list) {
@@ -190,31 +187,51 @@ exports.againstList = function(req, res, next) {
     res.send(result);
   });
   // 参赛人员列表
-  Competiton.againstList(competiton_type, competiton_process_type, function(err, list) {
+  Competiton.againstList(id, competiton_type, competiton_process_type, function(err, list) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
       ep.emit('list', list);
     }
   });
-  // 参赛总人数
-  // Competiton.memberNumAll(function(err, all) {
-  //   if (err) {
-  //     result = tools.returnMeg(0, err);
-  //   } else {
-  //     ep.emit('all', all);
-  //   }
-  // });
+}
+
+/* 对阵详情 */
+exports.againstDetail = function(req, res, next) {
+  var ep = new eventProxy();
+  var id = req.query.id,
+      data = {};
+
+  ep.all('detail', function (detail) {
+    data.detail =  detail;
+    result = tools.returnMeg(1, data);
+    res.send(result);
+  });
+  // 参赛人员详情
+  Competiton.againstDetail(id, function(err, detail) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+    } else {
+      ep.emit('detail', detail);
+    }
+  });
 }
 
 /* 我的比赛 */
 exports.userAgainstList = function(req, res, next) {
   var ep = new eventProxy();
-  var userId = req.body.userId,
+  var userId = req.query.user_id,
       data = {};
-
-  ep.all('list', function (list) {
+  if (!userId) {
+    result = tools.returnMeg(0, '非法用户id');
+    res.send(result);
+    return;
+  }
+  ep.all('list', 'all', 'win', 'fail', function (list, all, win, fail) {
     data.list =  list;
+    data.all =  all;
+    data.win =  win;
+    data.fail =  fail;
     result = tools.returnMeg(1, data);
     res.send(result);
   });
@@ -226,13 +243,29 @@ exports.userAgainstList = function(req, res, next) {
     }
   });
   // 参赛总人数
-  // Competiton.memberNumAll(function(err, all) {
-  //   if (err) {
-  //     result = tools.returnMeg(0, err);
-  //   } else {
-  //     ep.emit('all', all);
-  //   }
-  // });
+  Competiton.userAgainstStatistics(userId, 0, function(err, all) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+    } else {
+      ep.emit('all', all);
+    }
+  });
+  // 胜
+  Competiton.userAgainstStatistics(userId, 1, function(err, win) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+    } else {
+      ep.emit('win', win);
+    }
+  });
+  // 负
+  Competiton.userAgainstStatistics(userId, 2, function(err, fail) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+    } else {
+      ep.emit('fail', fail);
+    }
+  });
 }
 /* 比赛详情 */
 exports.competitonInfo = function(req, res, next) {

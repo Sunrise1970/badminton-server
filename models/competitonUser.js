@@ -14,11 +14,7 @@ var Schema    = mongoose.Schema;
  * @param {Date}   update_at 修改时间
  */
 var competitonUserSchema = new Schema({
-  name: { type: String },
-  avatar: { type: String },
-  card: { type: String },
-  tel: { type: String },
-  sex: { type: Number, default: 1 },
+  users: { type: Object },
   competiton_id: { type: String },
   competiton_type: { type: Number, default: 1 },
   create_at: { type: Date, default: Date.now },

@@ -3,8 +3,9 @@ var Schema   = mongoose.Schema;
 
 /**
  * 对阵信息schema
- * @param {Number} competiton_type               参赛类型(default: 1)
- * @param {Number} competiton_process_type        进程类型(default: 1)
+ * @param {String} competiton_id                参赛id
+ * @param {Number} competiton_type              参赛类型(default: 1)
+ * @param {Number} competiton_process_type      进程类型(default: 1)
  * @param {Number} competiton_area              比赛场地(default: 1)
  * @param {Number} competiton_order             场次(default: 1)
  * @param {String} judgment                     裁判
@@ -24,6 +25,7 @@ var Schema   = mongoose.Schema;
  * @param {Date}   update_at                    修改时间
  */
 var competitonAgainstSchema = new Schema({
+  competiton_id: { type: String },
   competiton_type: { type: Number, default: 1 },
   competiton_process_type: { type: Number, default: 1 },
   competiton_area: { type: Number, default: 1 },

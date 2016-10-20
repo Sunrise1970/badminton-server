@@ -35,10 +35,13 @@ router.get('/memberList', competiton.memberList);
 router.post('/againstAdd', competiton.against);
 
 /* 对阵列表 */
-router.post('/againstList', competiton.againstList);
+router.get('/againstList', competiton.againstList);
+
+/* 对阵详情 */
+router.get('/againstDetail', competiton.againstDetail);
 
 /* 我的比赛 */
-router.post('/userAgainstList', competiton.userAgainstList);
+router.get('/userAgainstList', competiton.userAgainstList);
 
 /* 通过用户id获取用户信息 */
 router.post('/getUserByUserId', competiton.getUserByUserId);
