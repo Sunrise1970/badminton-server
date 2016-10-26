@@ -181,62 +181,83 @@ exports.memberStatistics = function(id, sex, callback) {
  * 比赛用户列表 -- 统计
  * - userAgainstStatistics                     用户参加比赛信息统计
  * - err                                       数据库异常
- * @param {Number} userId                      用户id
+ * @param {Number}  tel                        用户手机
+ * @param {Number}  id                         比赛id
  * @param {Number}  win                        胜负
  * @param {Function} callback                  回调函数
  */
-exports.userAgainstStatistics = function(userId, win, callback) {
-  if (userId) {
-    var re =new RegExp(userId, "gim");
-    competitonAgainst
-    .find()
-    .or([{ 'part_a': re }, { 'part_b': re }])
-    .exec(function(err, userAgainst){
+exports.userAgainstStatistics = function(tel, id, win, callback) {
+  if (tel && id) {
+    // 1、先根据手机号查出用户id
+    competitonUser.find(function(err, info) {
       if (err) {
         return callback(err);
-      } else if(userAgainst.length === 0) {
-        return callback(null, 0);
+      } else if (info === null) {
+        return callback(null, []);
       } else {
-        let statisticResult = 0
-        switch(win) {
-          // 参与总场数
-          case 0 :
-            statisticResult = userAgainst.length
-          break;
-          // 胜
-          case 1 :
-            for (item of userAgainst) {
-              if (re.test(item.part_a)) {
-                if (item.part_a_score > item.part_b_score) {
-                  statisticResult ++
-                }
-              } else {
-                if (item.part_a_score < item.part_b_score) {
-                  statisticResult ++
-                }
-              }
+        let userId
+        for (item of info) {
+          for (key of item.users) {
+            if (key.tel == tel) {
+              userId = item._id
             }
-          break;
-          // 负
-          case 2 :
-            for (item of userAgainst) {
-              if (re.test(item.part_a)) {
-                if (item.part_a_score < item.part_b_score) {
-                  statisticResult ++
-                }
-              } else {
-                if (item.part_a_score > item.part_b_score) {
-                  statisticResult ++
-                }
-              }
-            }
-          break;
+          }
         }
-        return callback(null, statisticResult);
+        // 2、根据用户id查出参与的比赛
+        if (userId) {
+          var re =new RegExp(userId, "gim");
+          competitonAgainst
+          .find()
+          .or([{ 'part_a': re }, { 'part_b': re }])
+          .exec(function(err, userAgainst){
+            if (err) {
+              return callback(err);
+            } else if(userAgainst.length === 0) {
+              return callback(null, 0);
+            } else {
+              let statisticResult = 0
+              switch(win) {
+                // 参与总场数
+                case 0 :
+                  statisticResult = userAgainst.length
+                break;
+                // 胜
+                case 1 :
+                  for (item of userAgainst) {
+                    if (re.test(item.part_a)) {
+                      if (item.part_a_score > item.part_b_score) {
+                        statisticResult ++
+                      }
+                    } else {
+                      if (item.part_a_score < item.part_b_score) {
+                        statisticResult ++
+                      }
+                    }
+                  }
+                break;
+                // 负
+                case 2 :
+                  for (item of userAgainst) {
+                    if (re.test(item.part_a)) {
+                      if (item.part_a_score < item.part_b_score) {
+                        statisticResult ++
+                      }
+                    } else {
+                      if (item.part_a_score > item.part_b_score) {
+                        statisticResult ++
+                      }
+                    }
+                  }
+                break;
+              }
+              return callback(null, statisticResult);
+            }
+          });
+        } else {
+          return callback(null, 0);
+        }
       }
     });
-  } else {
-    return callback(null, 0);
   }
 }
 
@@ -360,53 +381,76 @@ exports.againstDetail = function(id, callback) {
 
 /**
  * 我的比赛
- * - getAgainstInfoByUserID,                   对阵列表信息
+ * - getAgainstInfo,                           用户对阵列表信息
  * - err                                       数据库异常
- * @param {String} userId                      用户id
+ * @param {String} id                          比赛id
+ * @param {String} tel                         手机号码
  * @param {Function} callback                  回调函数
  */
-exports.getAgainstInfoByUserID = function(userId, callback) {
-  if (userId) {
-    var that = this;
-    var re =new RegExp(userId, "gim");
-    competitonAgainst
-    .find({ $or: [{ part_a: re }, { part_b: re }] })
-    .lean()
-    .exec(function(err, againstList){
+exports.getAgainstInfo = function(tel, id, callback) {
+  var that = this;
+  if (tel && id) {
+    // 1、先根据手机号查出用户id
+    competitonUser.find(function(err, info) {
       if (err) {
         return callback(err);
-      }
-      if(againstList.length === 0) {
+      } else if (info === null) {
         return callback(null, []);
-      }
-      var proxy = new eventproxy();
-      proxy.after('user_find', againstList.length, function () {
-        callback(null, againstList);
-      });
-      for (var j = 0; j < againstList.length; j++) {
-        (function(i) {
-          var part_a_arr = againstList[i].part_a.split("_"),
-              part_b_arr = againstList[i].part_b.split("_"),
-              part_a_obj = {},
-              part_b_obj = {};
-          // 队员a信息
-          that.getUserByUserIdArr(part_a_arr, function(err, user) {
+      } else {
+        let userId
+        for (item of info) {
+          for (key of item.users) {
+            if (key.tel == tel) {
+              userId = item._id
+            }
+          }
+        }
+        // 2、根据用户id查出参与的比赛
+        if (userId) {
+          var re =new RegExp(userId, "gim");
+          competitonAgainst
+          .find({ $or: [{ part_a: re }, { part_b: re }] })
+          .lean()
+          .exec(function(err, againstList){
             if (err) {
               return callback(err);
             }
-            againstList[i].part_a_user = user;
-          });
-          // 队员b信息
-          that.getUserByUserIdArr(part_b_arr, function(err, user) {
-            if (err) {
-              return callback(err);
+            if(againstList.length === 0) {
+              return callback(null, []);
             }
-            againstList[i].part_b_user = user;
-            proxy.emit('user_find');
+            var proxy = new eventproxy();
+            proxy.after('user_find', againstList.length, function () {
+              callback(null, againstList);
+            });
+            for (var j = 0; j < againstList.length; j++) {
+              (function(i) {
+                var part_a_arr = againstList[i].part_a.split("_"),
+                    part_b_arr = againstList[i].part_b.split("_"),
+                    part_a_obj = {},
+                    part_b_obj = {};
+                // 队员a信息
+                that.getUserByUserIdArr(part_a_arr, function(err, user) {
+                  if (err) {
+                    return callback(err);
+                  }
+                  againstList[i].part_a_user = user;
+                });
+                // 队员b信息
+                that.getUserByUserIdArr(part_b_arr, function(err, user) {
+                  if (err) {
+                    return callback(err);
+                  }
+                  againstList[i].part_b_user = user;
+                  proxy.emit('user_find');
+                });
+              })(j);
+            }
           });
-        })(j);
+        } else {
+          return callback(null, []);
+        }
       }
-    });
+    })
   } else {
     return callback(null, []);
   }

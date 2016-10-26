@@ -220,10 +220,11 @@ exports.againstDetail = function(req, res, next) {
 /* 我的比赛 */
 exports.userAgainstList = function(req, res, next) {
   var ep = new eventProxy();
-  var userId = req.query.user_id,
+  var tel = req.query.tel,
+      id = req.query.competiton_id,
       data = {};
-  if (!userId) {
-    result = tools.returnMeg(0, '非法用户id');
+  if (!tel) {
+    result = tools.returnMeg(0, '非法用户');
     res.send(result);
     return;
   }
@@ -235,7 +236,12 @@ exports.userAgainstList = function(req, res, next) {
     result = tools.returnMeg(1, data);
     res.send(result);
   });
-  Competiton.getAgainstInfoByUserID(userId, function(err, list) {
+  // ep.all('list', function (list) {
+  //   data.list =  list;
+  //   result = tools.returnMeg(1, data);
+  //   res.send(result);
+  // });
+  Competiton.getAgainstInfo(tel, id, function(err, list) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -243,7 +249,7 @@ exports.userAgainstList = function(req, res, next) {
     }
   });
   // 参赛总人数
-  Competiton.userAgainstStatistics(userId, 0, function(err, all) {
+  Competiton.userAgainstStatistics(tel, id, 0, function(err, all) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -251,7 +257,7 @@ exports.userAgainstList = function(req, res, next) {
     }
   });
   // 胜
-  Competiton.userAgainstStatistics(userId, 1, function(err, win) {
+  Competiton.userAgainstStatistics(tel, id, 1, function(err, win) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -259,7 +265,7 @@ exports.userAgainstList = function(req, res, next) {
     }
   });
   // 负
-  Competiton.userAgainstStatistics(userId, 2, function(err, fail) {
+  Competiton.userAgainstStatistics(tel, id, 2, function(err, fail) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
@@ -269,15 +275,28 @@ exports.userAgainstList = function(req, res, next) {
 }
 /* 比赛详情 */
 exports.competitonInfo = function(req, res, next) {
-  var id = req.query.competitonId;
+  var id = req.query._id;
+  var ep = new eventProxy();
+  var data = {};
+  ep.all('info', function (info) {
+    result = tools.returnMeg(1, info);
+    res.send(result);
+  });
   Competiton.getCompetitonInfoById(id, function(err, info) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
-      result = tools.returnMeg(1, info);
+      ep.emit('info', info);
     }
-    res.send(result);
   });
+  // 参赛总人数
+  // Competiton.memberStatistics(id, 0, function(err, all) {
+  //   if (err) {
+  //     result = tools.returnMeg(0, err);
+  //   } else {
+  //     ep.emit('all', all);
+  //   }
+  // });
 }
 
 /* 通过用户id获取用户信息 */
