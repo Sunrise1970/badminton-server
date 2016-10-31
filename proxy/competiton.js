@@ -398,18 +398,44 @@ exports.getAgainstInfo = function(tel, id, callback) {
         return callback(null, []);
       } else {
         let userId
+        let userIdArr = []
         for (item of info) {
           for (key of item.users) {
             if (key.tel == tel) {
-              userId = item._id
+              userIdArr.push(item._id)
             }
           }
         }
         // 2、根据用户id查出参与的比赛
-        if (userId) {
-          var re =new RegExp(userId, "gim");
+        if (userIdArr.length != 0) {
+          let reArr = []
+          for (userId of userIdArr) {
+            reArr.push(new RegExp(userId, "gim"))
+          }
+          let findArr = []
+          let findObj = {}
+          let findStrItemA = []
+          let findStrItemB = []
+          for(i = 0; i < reArr.length; i++){
+              findStrItemA[i] = `{part_a: ${reArr[i]}}`;
+              findStrItemB[i] = `{part_b: ${reArr[i]}}`;
+              let findObjItemA = eval('(' + findStrItemA[i] + ')');
+              let findObjItemB = eval('(' + findStrItemB[i] + ')');
+              findArr.push(findObjItemA);
+              findArr.push(findObjItemB);
+          };
+          let findArra = []
+          let findStrItem = {}
+          let findObjItem = {}
+          for (find of findArr) {
+            for (key in find) {
+              let findStrItem = `{${key}: ${find[key]}}`
+              let findObjItem = eval('(' + findStrItem + ')')
+              findArra.push(findObjItem)
+            }
+          }
           competitonAgainst
-          .find({ $or: [{ part_a: re }, { part_b: re }] })
+          .find({ $or: findArr })
           .lean()
           .exec(function(err, againstList){
             if (err) {
@@ -481,4 +507,49 @@ exports.getUserByUserIdArr = function(userArr, callback) {
       return callback(null, user);
     }
   });
+}
+
+
+/**
+ * 通过用户tel获取抽奖信息
+ * - lotteryId                                 抽奖信息
+ * - err                                       数据库异常
+ * @param {String} tel                         用户手机
+ * @param {Function} callback                  回调函数
+ */
+exports.lotteryId = function(tel, callback) {
+  competitonUser.find(function(err, info) {
+    if (err) {
+      return callback(err);
+    } else if (info === null) {
+      return callback(null, '');
+    } else {
+      for (item of info) {
+        for (key in item.users) {
+          // 当前用户的抽奖状态
+          if (item.users[key].tel == tel) {
+            // 未抽奖
+            if (item.users[key].lotteryId == 0) {
+              // 随机数
+              let loterry = Math.floor(Math.random() * 8)
+              // let lotteryId = `users.${key}.lotteryId`
+              // competitonUser.update({ '_id': item._id },{ $set: { 'competiton_id': 'loterry' }})
+              return callback(null, loterry);
+            } else {
+              return callback(null, 'haslottery');
+            }
+          } else {
+            return callback(null, '');
+          }
+        }
+      }
+    }
+  });
+  // competitonUser.find({ "lotteryId": { "$in": userArr } }, { 'name':1, 'tel':1 } , function(err, user){
+  //   if (err) {
+  //     return callback(err);
+  //   } else {
+  //     return callback(null, user);
+  //   }
+  // });
 }

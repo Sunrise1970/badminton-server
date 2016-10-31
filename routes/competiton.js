@@ -46,4 +46,7 @@ router.get('/userAgainstList', competiton.userAgainstList);
 /* 通过用户id获取用户信息 */
 router.post('/getUserByUserId', competiton.getUserByUserId);
 
+/* 通过用户手机号获取抽奖id */
+router.get('/lotteryId', competiton.lotteryId);
+
 module.exports = router;

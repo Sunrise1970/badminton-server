@@ -77,7 +77,7 @@ exports.attend = function(req, res, next) {
       let data = {
         user: user,
         competiton_id: competiton_id,
-        competiton_type: competiton_type
+        competiton_type: competiton_type,
       }
       result = tools.returnMeg(1, data);
     }
@@ -236,11 +236,6 @@ exports.userAgainstList = function(req, res, next) {
     result = tools.returnMeg(1, data);
     res.send(result);
   });
-  // ep.all('list', function (list) {
-  //   data.list =  list;
-  //   result = tools.returnMeg(1, data);
-  //   res.send(result);
-  // });
   Competiton.getAgainstInfo(tel, id, function(err, list) {
     if (err) {
       result = tools.returnMeg(0, err);
@@ -289,14 +284,6 @@ exports.competitonInfo = function(req, res, next) {
       ep.emit('info', info);
     }
   });
-  // 参赛总人数
-  // Competiton.memberStatistics(id, 0, function(err, all) {
-  //   if (err) {
-  //     result = tools.returnMeg(0, err);
-  //   } else {
-  //     ep.emit('all', all);
-  //   }
-  // });
 }
 
 /* 通过用户id获取用户信息 */
@@ -304,6 +291,20 @@ exports.getUserByUserId = function(req, res, next) {
   var id = req.body.userId;
   // 参赛人员列表
   Competiton.getUserByUserId(id, function(err, user) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+    } else {
+      result = tools.returnMeg(1, user);
+    }
+    res.send(result);
+  });
+}
+
+/* 通过用户手机号获取抽奖id */
+exports.lotteryId = function(req, res, next) {
+  var tel = req.query.tel;
+  // 参赛人员列表
+  Competiton.lotteryId(tel, function(err, user) {
     if (err) {
       result = tools.returnMeg(0, err);
     } else {
