@@ -1,0 +1,36 @@
+{ 
+    "_id" : ObjectId("5819c5a596afe613faca717a"), 
+    "score_detail" : "21:11_21:19_16_21", 
+    "part_b" : "5819c41c96afe613faca7172", 
+    "part_a" : "5819c3f696afe613faca7170", 
+    "judgment" : "教练", 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "update_at" : ISODate("2016-11-02T10:53:25.981+0000"), 
+    "create_at" : ISODate("2016-11-02T10:53:25.977+0000"), 
+    "state" : NumberInt(3), 
+    "part_b_score" : NumberInt(1), 
+    "part_a_score" : NumberInt(2), 
+    "competiton_order" : NumberInt(1), 
+    "competiton_area" : NumberInt(1), 
+    "competiton_process_type" : NumberInt(1), 
+    "competiton_type" : NumberInt(1), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c5e796afe613faca717b"), 
+    "score_detail" : "21:11_21:19_16_21", 
+    "part_b" : "5819c4ec96afe613faca7177", 
+    "part_a" : "5819c44d96afe613faca7174", 
+    "judgment" : "教练", 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "update_at" : ISODate("2016-11-02T10:54:31.404+0000"), 
+    "create_at" : ISODate("2016-11-02T10:54:31.403+0000"), 
+    "state" : NumberInt(3), 
+    "part_b_score" : NumberInt(1), 
+    "part_a_score" : NumberInt(2), 
+    "competiton_order" : NumberInt(1), 
+    "competiton_area" : NumberInt(1), 
+    "competiton_process_type" : NumberInt(1), 
+    "competiton_type" : NumberInt(3), 
+    "__v" : NumberInt(0)
+}

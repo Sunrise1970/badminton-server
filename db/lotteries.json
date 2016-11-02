@@ -1,0 +1,54 @@
+{ 
+    "_id" : ObjectId("5819c3f696afe613faca7171"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15622233072", 
+    "update_at" : ISODate("2016-11-02T10:46:14.891+0000"), 
+    "create_at" : ISODate("2016-11-02T10:46:14.889+0000"), 
+    "lotteryId" : NumberInt(5), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c41c96afe613faca7173"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15622233071", 
+    "update_at" : ISODate("2016-11-02T10:46:52.281+0000"), 
+    "create_at" : ISODate("2016-11-02T10:46:52.279+0000"), 
+    "lotteryId" : NumberInt(0), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c44d96afe613faca7175"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15622233072", 
+    "update_at" : ISODate("2016-11-02T10:47:41.203+0000"), 
+    "create_at" : ISODate("2016-11-02T10:47:41.200+0000"), 
+    "lotteryId" : NumberInt(0), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c44d96afe613faca7176"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15622233071", 
+    "update_at" : ISODate("2016-11-02T10:47:41.204+0000"), 
+    "create_at" : ISODate("2016-11-02T10:47:41.201+0000"), 
+    "lotteryId" : NumberInt(0), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c4ec96afe613faca7178"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15521025502", 
+    "update_at" : ISODate("2016-11-02T10:50:20.280+0000"), 
+    "create_at" : ISODate("2016-11-02T10:50:20.278+0000"), 
+    "lotteryId" : NumberInt(0), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c4ec96afe613faca7179"), 
+    "competitionId" : "57e87da371e96a039c452f84", 
+    "tel" : "15521025501", 
+    "update_at" : ISODate("2016-11-02T10:50:20.281+0000"), 
+    "create_at" : ISODate("2016-11-02T10:50:20.279+0000"), 
+    "lotteryId" : NumberInt(0), 
+    "__v" : NumberInt(0)
+}

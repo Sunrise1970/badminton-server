@@ -1,0 +1,82 @@
+{ 
+    "_id" : ObjectId("5819c3f696afe613faca7170"), 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "users" : [
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15622233072", 
+            "card" : "441621199212225315", 
+            "name" : "小明"
+        }
+    ], 
+    "update_at" : ISODate("2016-11-02T10:46:14.871+0000"), 
+    "create_at" : ISODate("2016-11-02T10:46:14.863+0000"), 
+    "competiton_type" : NumberInt(1), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c41c96afe613faca7172"), 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "users" : [
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15622233071", 
+            "card" : "441621199212225315", 
+            "name" : "小亮"
+        }
+    ], 
+    "update_at" : ISODate("2016-11-02T10:46:52.270+0000"), 
+    "create_at" : ISODate("2016-11-02T10:46:52.267+0000"), 
+    "competiton_type" : NumberInt(1), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c44d96afe613faca7174"), 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "users" : [
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15622233072", 
+            "card" : "441621199212225315", 
+            "name" : "小明"
+        }, 
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15622233071", 
+            "card" : "441621199212225315", 
+            "name" : "小亮"
+        }
+    ], 
+    "update_at" : ISODate("2016-11-02T10:47:41.191+0000"), 
+    "create_at" : ISODate("2016-11-02T10:47:41.190+0000"), 
+    "competiton_type" : NumberInt(3), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("5819c4ec96afe613faca7177"), 
+    "competiton_id" : "57e87da371e96a039c452f84", 
+    "users" : [
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15521025502", 
+            "card" : "441621199212225315", 
+            "name" : "小斌"
+        }, 
+        {
+            "lotteryId" : "0", 
+            "sex" : "1", 
+            "tel" : "15521025501", 
+            "card" : "441621199212225315", 
+            "name" : "小强"
+        }
+    ], 
+    "update_at" : ISODate("2016-11-02T10:50:20.269+0000"), 
+    "create_at" : ISODate("2016-11-02T10:50:20.268+0000"), 
+    "competiton_type" : NumberInt(3), 
+    "__v" : NumberInt(0)
+}

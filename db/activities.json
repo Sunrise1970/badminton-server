@@ -1,0 +1,28 @@
+{ 
+    "_id" : ObjectId("57e8f9706b09ee1f68d17e40"), 
+    "allow_attend_num" : NumberInt(0), 
+    "info" : "【羽毛球】9月3号尤雨溪宣布与阿里巴巴weex团队合作，非常鸡冻！", 
+    "time" : "20161111", 
+    "captain_avatar" : "http://placeholder.qiniudn.com/80x80", 
+    "captain" : "教练", 
+    "hall_avatar" : "http://placeholder.qiniudn.com/50x50", 
+    "hall_name" : "石溪羽毛球馆", 
+    "update_at" : ISODate("2016-09-26T10:33:20.190+0000"), 
+    "create_at" : ISODate("2016-09-26T10:33:20.189+0000"), 
+    "state" : NumberInt(1), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("57e8f9806b09ee1f68d17e41"), 
+    "allow_attend_num" : NumberInt(0), 
+    "info" : "【羽毛球】9月3号尤雨溪宣布与阿里巴巴weex团队合作，非常鸡冻！", 
+    "time" : "20161111", 
+    "captain_avatar" : "http://placeholder.qiniudn.com/80x80", 
+    "captain" : "教练", 
+    "hall_avatar" : "http://placeholder.qiniudn.com/50x50", 
+    "hall_name" : "石溪羽毛球馆2", 
+    "update_at" : ISODate("2016-09-26T10:33:36.460+0000"), 
+    "create_at" : ISODate("2016-09-26T10:33:36.458+0000"), 
+    "state" : NumberInt(1), 
+    "__v" : NumberInt(0)
+}

@@ -1,0 +1,14 @@
+{ 
+    "_id" : ObjectId("57e87da371e96a039c452f84"), 
+    "company" : "铂涛信息技术（广州）公司", 
+    "company_logo" : "http://placehold.it/80x80", 
+    "attend_num" : NumberInt(88), 
+    "competiton_img" : "http://placeholder.qiniudn.com/640x200", 
+    "competiton_date" : "1479171600000", 
+    "competiton_name" : "铂涛互联网羽毛球比赛", 
+    "hall_name" : "石溪羽毛球馆", 
+    "competiton_type" : NumberInt(1), 
+    "update_at" : ISODate("2016-09-26T01:45:07.764+0000"), 
+    "create_at" : ISODate("2016-09-26T01:45:07.760+0000"), 
+    "__v" : NumberInt(0)
+}
