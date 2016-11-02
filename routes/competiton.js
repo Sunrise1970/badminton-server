@@ -49,4 +49,7 @@ router.post('/getUserByUserId', competiton.getUserByUserId);
 /* 通过用户手机号获取抽奖id */
 router.get('/lotteryId', competiton.lotteryId);
 
+/* 用户报名--手机号码 */
+router.get('/userTel', competiton.userTel);
+
 module.exports = router;

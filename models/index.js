@@ -16,9 +16,11 @@ require('./competitonAgainst');
 require('./competiton');
 require('./activity');
 require('./activityUser');
+require('./lottery');
 
 exports.competitonUser = mongoose.model('competitonUser');
 exports.competitonAgainst = mongoose.model('competitonAgainst');
 exports.competiton = mongoose.model('competiton');
 exports.activity = mongoose.model('activity');
 exports.activityUser = mongoose.model('activityUser');
+exports.lottery = mongoose.model('lottery');

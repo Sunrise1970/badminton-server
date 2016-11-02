@@ -313,3 +313,15 @@ exports.lotteryId = function(req, res, next) {
     res.send(result);
   });
 }
+
+
+/* 比赛报名 -- 用户手机 */
+exports.userTel = function(req, res, next) {
+  var tel = req.query.tel,
+      competiton_id = req.query.competitonId,
+      telArr = tel.split("_");
+  for (telItem of telArr) {
+    Competiton.saveUserTel(telItem, competiton_id, function(err, info) {});
+  }
+  res.send('result')
+}

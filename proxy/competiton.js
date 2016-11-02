@@ -4,6 +4,7 @@ var eventproxy          = require('eventproxy');
 var competiton          = models.competiton;
 var competitonUser      = models.competitonUser;
 var competitonAgainst   = models.competitonAgainst;
+var lottery             = models.lottery;
 
 
 /**
@@ -511,45 +512,42 @@ exports.getUserByUserIdArr = function(userArr, callback) {
 
 
 /**
- * 通过用户tel获取抽奖信息
+ * 通过用户tel获取和设置抽奖信息
  * - lotteryId                                 抽奖信息
  * - err                                       数据库异常
  * @param {String} tel                         用户手机
  * @param {Function} callback                  回调函数
  */
 exports.lotteryId = function(tel, callback) {
-  competitonUser.find(function(err, info) {
+  lottery.findOne({ tel: tel } , function(err, lotteryUser){
     if (err) {
       return callback(err);
-    } else if (info === null) {
-      return callback(null, '');
+    } else if (lotteryUser === null) {
+        return callback(null, '');
     } else {
-      for (item of info) {
-        for (key in item.users) {
-          // 当前用户的抽奖状态
-          if (item.users[key].tel == tel) {
-            // 未抽奖
-            if (item.users[key].lotteryId == 0) {
-              // 随机数
-              let loterry = Math.floor(Math.random() * 8)
-              // let lotteryId = `users.${key}.lotteryId`
-              // competitonUser.update({ '_id': item._id },{ $set: { 'competiton_id': 'loterry' }})
-              return callback(null, loterry);
-            } else {
-              return callback(null, 'haslottery');
-            }
-          } else {
-            return callback(null, '');
-          }
-        }
+      if (lotteryUser.lotteryId > 0) {
+        return callback(null, 'haslottery');
+      } else {
+        let loterry = Math.floor(Math.random() * 8);
+        lottery.update({tel: tel},{$set:{lotteryId: loterry}}, function () {});
+        return callback(null, loterry);
       }
     }
   });
-  // competitonUser.find({ "lotteryId": { "$in": userArr } }, { 'name':1, 'tel':1 } , function(err, user){
-  //   if (err) {
-  //     return callback(err);
-  //   } else {
-  //     return callback(null, user);
-  //   }
-  // });
+}
+
+/**
+ * 用户报名
+ * Callback:
+ * - err                                       数据库异常
+ * - saveUserTel                               用户报名信息--手机
+ * @param {String} tel                         用户手机
+ * @param {Number} competiton_id               比赛id
+ * @param {Function} callback                  回调函数
+ */
+exports.saveUserTel = function(tel, competiton_id, callback) {
+  var lotteryUser = new lottery();
+  lotteryUser.tel = tel;
+  lotteryUser.competitionId = competiton_id;
+  lotteryUser.save(callback);
 }
