@@ -551,3 +551,32 @@ exports.saveUserTel = function(tel, competiton_id, callback) {
   lotteryUser.competitionId = competiton_id;
   lotteryUser.save(callback);
 }
+
+/**
+ * 通过用户手机获取报名参赛信息
+ * - getUserCompetitionByTel                   报名参赛信息
+ * - err                                       数据库异常
+ * @param {String} tel                         用户tel
+ * @param {Function} callback                  回调函数
+ */
+exports.getUserCompetitionByTel = function(tel, callback) {
+  // 1、先根据手机号查出用户id
+  competitonUser.find(function(err, info) {
+    if (err) {
+      return callback(err);
+    } else if (info === null) {
+      return callback(null, []);
+    } else {
+      let userId
+      let userIdArr = []
+      for (item of info) {
+        for (key of item.users) {
+          if (key.tel == tel) {
+            userIdArr.push(item._id)
+          }
+        }
+      }
+      return callback(null, userIdArr.length);
+    }
+  })
+}

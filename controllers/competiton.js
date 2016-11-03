@@ -59,6 +59,7 @@ exports.competitonList = function(req, res, next) {
 /* 比赛报名 */
 exports.attend = function(req, res, next) {
   var user = req.query.user,
+      tel = req.query.tel,
       competiton_id = req.query.competitonId,
       competiton_type = req.query.competitonType;
   if ([user].some(function(item) { return item === ''; })) {
@@ -69,19 +70,27 @@ exports.attend = function(req, res, next) {
   //   result = tools.returnMeg(0, '手机号码有误');
   //   return res.send(result);
   // }
-  Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
-    if (err) {
-      result = tools.returnMeg(0, err);
-      return next(err);
+  Competiton.getUserCompetitionByTel(tel, function(err, info) {
+    // 判断是否已参与两次比赛
+    if (info >= 2) {
+      result = tools.returnMeg(1, 'hasattend');
+      res.send(result);
     } else {
-      let data = {
-        user: user,
-        competiton_id: competiton_id,
-        competiton_type: competiton_type,
-      }
-      result = tools.returnMeg(1, data);
+      Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
+        if (err) {
+          result = tools.returnMeg(0, err);
+          return next(err);
+        } else {
+          let data = {
+            user: user,
+            competiton_id: competiton_id,
+            competiton_type: competiton_type,
+          }
+          result = tools.returnMeg(1, data);
+        }
+        res.send(result);
+      });
     }
-    res.send(result);
   });
 }
 
