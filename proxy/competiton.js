@@ -559,24 +559,40 @@ exports.saveUserTel = function(tel, competiton_id, callback) {
  * @param {String} tel                         用户tel
  * @param {Function} callback                  回调函数
  */
-exports.getUserCompetitionByTel = function(tel, callback) {
-  // 1、先根据手机号查出用户id
+exports.getUserCompetitionByTel = function(tel, sex, callback) {
+  var telArr = tel.split("_");
+  var sexArr = sex.split("_");
+  // 先根据手机号查出用户信息
   competitonUser.find(function(err, info) {
     if (err) {
       return callback(err);
     } else if (info === null) {
       return callback(null, []);
     } else {
-      let userId
-      let userIdArr = []
+      let userId;
+      let data = { idLen: 0, competitonType: [], sex: [] };
+      let userIdArr = [];
+      let userSexArr = [];
       for (item of info) {
         for (key of item.users) {
-          if (key.tel == tel) {
-            userIdArr.push(item._id)
+          for (var i = 0;i < telArr.length; i++) {
+            // 当前报名用户
+            if (key.tel == telArr[i]) {
+              // 用来判断用户是否参与了两场比赛
+              userIdArr.push(item._id);
+              // 用来判断用户是否参与了当前项目比赛
+              data.competitonType.push(item.competiton_type);
+              // 用来判断当前用户的性别和参与的项目是否匹配
+              if (key.sex != sexArr[i]) {
+                userSexArr.push(item.competiton_type);
+              }
+            }
           }
         }
       }
-      return callback(null, userIdArr.length);
+      data.idLen = userIdArr.length;
+      data.sex = userSexArr;
+      return callback(null, data);
     }
   })
 }

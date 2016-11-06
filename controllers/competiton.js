@@ -60,6 +60,7 @@ exports.competitonList = function(req, res, next) {
 exports.attend = function(req, res, next) {
   var user = req.query.user,
       tel = req.query.tel,
+      sex = req.query.sex,
       competiton_id = req.query.competitonId,
       competiton_type = req.query.competitonType;
   if ([user].some(function(item) { return item === ''; })) {
@@ -70,10 +71,24 @@ exports.attend = function(req, res, next) {
   //   result = tools.returnMeg(0, '手机号码有误');
   //   return res.send(result);
   // }
-  Competiton.getUserCompetitionByTel(tel, function(err, info) {
-    // 判断是否已参与两次比赛
-    if (info >= 2) {
-      result = tools.returnMeg(1, 'hasattend');
+  Competiton.getUserCompetitionByTel(tel, sex, function(err, data) {
+    // 判断是否已参与两次比赛(双打)
+    if (data.idLen > 2) {
+      result = tools.returnMeg(1, 'hasAttendTwo');
+      res.send(result);
+    // 判断是否已参与两次比赛(单打)
+    } else if (data.len == 2 && (competiton_type == 1 || competiton_type == 2)) {
+      result = tools.returnMeg(1, 'hasAttendTwo');
+      res.send(result);
+    // 判断是否报名相对项目比赛
+    } else if (data.competitonType.indexOf(parseInt(competiton_type)) != -1) {
+      result = tools.returnMeg(1, 'hasAttendSame');
+      res.send(result);
+    } else if (data.sex.length != 0) {
+      var gay = {}
+      gay.text = 'gay';
+      gay.type = data.sex[0];
+      result = tools.returnMeg(1, gay);
       res.send(result);
     } else {
       Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
@@ -81,12 +96,13 @@ exports.attend = function(req, res, next) {
           result = tools.returnMeg(0, err);
           return next(err);
         } else {
-          let data = {
+          let returnData = {
             user: user,
             competiton_id: competiton_id,
             competiton_type: competiton_type,
+            sexLen: data.sexLen,
           }
-          result = tools.returnMeg(1, data);
+          result = tools.returnMeg(1, returnData);
         }
         res.send(result);
       });
