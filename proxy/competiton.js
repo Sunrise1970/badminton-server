@@ -528,7 +528,25 @@ exports.lotteryId = function(tel, callback) {
       if (lotteryUser.lotteryId > 0) {
         return callback(null, 'haslottery');
       } else {
-        let loterry = Math.floor(Math.random() * 8);
+        let sum = 0;
+        let rand = 0;
+        let result = 0;
+        let loterryArr = {'1':5, '3':15, '5':30, '7':50};
+        // 计算总和
+        for (var i in loterryArr) {
+          sum += loterryArr[i];
+        }
+        for (var i in loterryArr) {
+          rand = Math.floor(Math.random() * sum + 1);
+          if (loterryArr[i] >= rand) {
+            result = i;
+            break;
+          } else {
+            sum -= loterryArr[i];
+          }
+        }
+        // let loterry = Math.floor(Math.random() * 8);
+        let loterry = result;
         lottery.update({tel: tel},{$set:{lotteryId: loterry}}, function () {});
         return callback(null, loterry);
       }
@@ -593,6 +611,38 @@ exports.getUserCompetitionByTel = function(tel, sex, callback) {
       data.idLen = userIdArr.length;
       data.sex = userSexArr;
       return callback(null, data);
+    }
+  })
+}
+
+/**
+ * 通过项目类型获取报名参赛信息
+ * - getCompetitonInfoByType                   报名参赛信息
+ * - err                                       数据库异常
+ * @param {String}   data                      是否已报满
+ * @param {Function} callback                  回调函数
+ */
+exports.getCompetitonInfoByType = function(type, callback) {
+  competitonUser.find({ competiton_type: type }, function(err, info) {
+    if (err) {
+      return callback(err);
+    } else if (info === null) {
+      return callback(null, false);
+    } else {
+      let result = '';
+      let len = info.length;
+      if (type == 1) {
+        result = (len >= 16) ? true : false;
+      } else if (type == 2) {
+        result = (len >= 8) ? true : false;
+      } else if (type == 3) {
+        result = (len >= 12) ? true : false;
+      } else if (type == 4) {
+        result = (len >= 6) ? true : false;
+      } else if (type == 5) {
+        result = (len >= 8) ? true : false;
+      }
+      return callback(null, result);
     }
   })
 }

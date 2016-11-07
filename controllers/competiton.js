@@ -71,40 +71,48 @@ exports.attend = function(req, res, next) {
   //   result = tools.returnMeg(0, '手机号码有误');
   //   return res.send(result);
   // }
-  Competiton.getUserCompetitionByTel(tel, sex, function(err, data) {
-    // 判断是否已参与两次比赛(双打)
-    if (data.idLen > 2) {
-      result = tools.returnMeg(1, 'hasAttendTwo');
-      res.send(result);
-    // 判断是否已参与两次比赛(单打)
-    } else if (data.len == 2 && (competiton_type == 1 || competiton_type == 2)) {
-      result = tools.returnMeg(1, 'hasAttendTwo');
-      res.send(result);
-    // 判断是否报名相对项目比赛
-    } else if (data.competitonType.indexOf(parseInt(competiton_type)) != -1) {
-      result = tools.returnMeg(1, 'hasAttendSame');
-      res.send(result);
-    } else if (data.sex.length != 0) {
-      var gay = {}
-      gay.text = 'gay';
-      gay.type = data.sex[0];
-      result = tools.returnMeg(1, gay);
-      res.send(result);
-    } else {
-      Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
-        if (err) {
-          result = tools.returnMeg(0, err);
-          return next(err);
-        } else {
-          let returnData = {
-            user: user,
-            competiton_id: competiton_id,
-            competiton_type: competiton_type,
-            sexLen: data.sexLen,
-          }
-          result = tools.returnMeg(1, returnData);
-        }
+  // 判断改项目是否已报满
+  Competiton.getCompetitonInfoByType(competiton_type, function(err, data) {
+    if (data) {
+        result = tools.returnMeg(1, 'hasOver');
         res.send(result);
+    } else {
+      Competiton.getUserCompetitionByTel(tel, sex, function(err, data) {
+        // 判断是否已参与两次比赛(双打)
+        if (data.idLen > 2) {
+          result = tools.returnMeg(1, 'hasAttendTwo');
+          res.send(result);
+        // 判断是否已参与两次比赛(单打)
+        } else if (data.len == 2 && (competiton_type == 1 || competiton_type == 2)) {
+          result = tools.returnMeg(1, 'hasAttendTwo');
+          res.send(result);
+        // 判断是否报名相对项目比赛
+        } else if (data.competitonType.indexOf(parseInt(competiton_type)) != -1) {
+          result = tools.returnMeg(1, 'hasAttendSame');
+          res.send(result);
+        } else if (data.sex.length != 0) {
+          var gay = {}
+          gay.text = 'gay';
+          gay.type = data.sex[0];
+          result = tools.returnMeg(1, gay);
+          res.send(result);
+        } else {
+          Competiton.newAndSaveUser(user, competiton_type, competiton_id, function(err) {
+            if (err) {
+              result = tools.returnMeg(0, err);
+              return next(err);
+            } else {
+              let returnData = {
+                user: user,
+                competiton_id: competiton_id,
+                competiton_type: competiton_type,
+                sexLen: data.sexLen,
+              }
+              result = tools.returnMeg(1, returnData);
+            }
+            res.send(result);
+          });
+        }
       });
     }
   });
