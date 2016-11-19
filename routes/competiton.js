@@ -52,4 +52,7 @@ router.get('/lotteryId', competiton.lotteryId);
 /* 用户报名--手机号码 */
 router.get('/userTel', competiton.userTel);
 
+/* 获奖名单 */
+router.get('/lotteryList', competiton.lotteryList);
+
 module.exports = router;

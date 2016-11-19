@@ -9,6 +9,7 @@ var Schema   = mongoose.Schema;
  * @param {Number} competiton_area              比赛场地(default: 1)
  * @param {Number} competiton_order             场次(default: 1)
  * @param {String} judgment                     裁判
+ * @param {String} competiton_date              比赛时间
  * @param {Object} part_a                       a用户id组
  * -- @param {Number} user_a1_id                a1用户id
  * -- @param {Number} user_a2_id                a2用户id（双打时）
@@ -36,6 +37,7 @@ var competitonAgainstSchema = new Schema({
   part_a_score: { type: Number, default: 0 },
   part_b_score: { type: Number, default: 0 },
   score_detail: { type: Object },
+  competiton_date: { type: String },
   state: { type: Number , default: 1 },
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now }

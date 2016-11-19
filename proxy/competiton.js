@@ -281,7 +281,7 @@ exports.userAgainstStatistics = function(tel, id, win, callback) {
  * @param {Number} state                       比赛状态（1：未开始；2：进行中 3：已结束）
  * @param {Function} callback 回调函数
  */
-exports.newAndSaveAgainst = function(id, competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, callback) {
+exports.newAndSaveAgainst = function(id, competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, competiton_date, callback) {
   var against = new competitonAgainst();
   against.competiton_id = id;
   against.competiton_type = competiton_type;
@@ -295,6 +295,7 @@ exports.newAndSaveAgainst = function(id, competiton_type, competiton_process_typ
   against.part_b_score = part_b_score;
   against.score_detail = score_detail;
   against.state = state;
+  against.competiton_date = competiton_date;
 
   against.save(callback);
 }
@@ -531,7 +532,7 @@ exports.lotteryId = function(tel, callback) {
         let sum = 0;
         let rand = 0;
         let result = 0;
-        let loterryArr = {'1':5, '3':15, '5':30, '7':50};
+        let loterryArr = {'1':5, '2':10, '3':15, '4':10, '5':20, '6':10, '7':20, '8':10};
         // 计算总和
         for (var i in loterryArr) {
           sum += loterryArr[i];
@@ -552,6 +553,33 @@ exports.lotteryId = function(tel, callback) {
       }
     }
   });
+}
+
+/**
+ * 中奖名单
+ * - lotteryList                               中奖名单
+ * - err                                       数据库异常
+ * @param {Function} callback                  回调函数
+ */
+exports.lotteryList = function(callback) {
+  lottery.find(function(err, list) {
+    if (err) {
+      return callback(err);
+    } else {
+      let lotteryList = [];
+      let item = { name:'', lotteryId: 0 };
+      let lotteryArr = [1, 3, 5, 7];
+      let findStrItemA = []
+      for(var i = 0; i < list.length; i++) {
+        if (lotteryArr.indexOf(list[i].lotteryId) != -1) {
+          findStrItemA[i] = `{name: '${list[i].name}', lotteryId: ${list[i].lotteryId}}`;
+          let findObjItemA = eval('(' + findStrItemA[i] + ')');
+          lotteryList.push(findObjItemA);
+        }
+      }
+      return callback(null, lotteryList);
+    }
+  })
 }
 
 /**

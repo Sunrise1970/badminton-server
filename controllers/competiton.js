@@ -181,8 +181,9 @@ exports.against = function(req, res, next) {
       part_b_score = req.body.part_b_score,
       score_detail = req.body.score_detail,
       state = req.body.state,
+      competiton_date = req.body.competiton_date,
       result;
-  Competiton.newAndSaveAgainst(id, competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, function(err) {
+  Competiton.newAndSaveAgainst(id, competiton_type, competiton_process_type, competiton_area, competiton_order, judgment, part_a, part_b, part_a_score, part_b_score, score_detail, state, competiton_date, function(err) {
     if (err) {
       result = tools.returnMeg(0, err);
       return next(err);
@@ -200,6 +201,7 @@ exports.against = function(req, res, next) {
       data.part_b_score = part_b_score;
       data.score_detail = score_detail;
       data.state = state;
+      data.competiton_date = competiton_date;
       result = tools.returnMeg(1, data);
     }
     res.send(result);
@@ -347,6 +349,21 @@ exports.lotteryId = function(req, res, next) {
   });
 }
 
+/* 中奖名单 */
+exports.lotteryList = function(req, res, next) {
+  Competiton.lotteryList(function(err, list) {
+    if (err) {
+      result = tools.returnMeg(0, err);
+      return next(err);
+    } else {
+      let data = {
+        list: list
+      }
+      result = tools.returnMeg(1, data);
+    }
+    res.send(result);
+  });
+}
 
 /* 比赛报名 -- 用户手机 */
 exports.userTel = function(req, res, next) {
