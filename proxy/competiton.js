@@ -532,7 +532,7 @@ exports.lotteryId = function(tel, callback) {
         let sum = 0;
         let rand = 0;
         let result = 0;
-        let loterryArr = {'1':5, '2':10, '3':15, '4':10, '5':20, '6':10, '7':20, '8':10};
+        let loterryArr = {'1':5, '2':10, '3':15, '4':10, '5':15, '6':10, '7':25, '8':10};
         // 计算总和
         for (var i in loterryArr) {
           sum += loterryArr[i];
